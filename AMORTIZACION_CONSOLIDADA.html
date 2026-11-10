@@ -13,9 +13,8 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- ExcelJS y html2pdf.js -->
+  <!-- ExcelJS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     :root {
@@ -249,10 +248,8 @@
   <!-- CONTENEDOR PRINCIPAL -->
   <main class="container mx-auto px-4 py-8 max-w-[1650px] relative z-10">
     
-    <!-- BARRA DE NAVEGACIÓN SUPERIOR / BOTÓN REGRESAR A PAGINA_SEC.html -->
+    <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
     <div class="flex items-center justify-between mb-6 animate__animated animate__fadeInDown">
-      
-
       <div class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-950/80 border border-cyan-400/40 text-cyan-300 text-xs font-bold tracking-widest uppercase shadow-lg">
         <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
         Modelo de Estructuración M
@@ -485,16 +482,13 @@
             Cronograma Mensual Consolidado de Amortizaciones (Línea de Tiempo Unificada)
           </h2>
           <p class="text-xs text-slate-300 mt-0.5">
-            Suma cronológica mes por mes de todos los préstamos activos. Resalta picos de amortización y pagos de todos los bancos (ej. Noviembre 2027).
+            Suma cronológica mes por mes de todos los préstamos activos. Intereses calculados proporcionalmente a los días exactos del mes de corte (Base 360).
           </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <button onclick="exportarExcelConsolidado()" class="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow">
-            📊 Excel
-          </button>
-          <button onclick="exportarPDFConsolidado()" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow">
-            📄 PDF
+          <button onclick="exportarExcelConsolidado()" class="px-3.5 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow">
+            📊 Exportar Excel
           </button>
         </div>
       </div>
@@ -650,66 +644,15 @@
     </div>
   </div>
 
-  <!-- PLANTILLA OCULTA PARA PDF EJECUTIVO CONSOLIDADO -->
-  <div id="pdfPlantillaConsolidada" style="display: none; background: #ffffff; color: #072146; font-family: Arial, sans-serif; padding: 25px;">
-    <div style="border-bottom: 3px solid #004481; padding-bottom: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-      <div>
-        <div style="font-size: 20px; font-weight: bold; color: #004481;">Informe de Amortización Consolidada Multibanco</div>
-        <div style="font-size: 13px; color: #009ee3; font-weight: bold;">Estructura Consolidada de Pasivo Financiero</div>
-      </div>
-      <div style="text-align: right; font-size: 10px; color: #64748b;">
-        <div><b>Fecha Emisión:</b> <span id="pdfFechaEmision"></span></div>
-        <div><b>Banquero:</b> <span id="pdfBanquero"></span></div>
-      </div>
-    </div>
-
-    <!-- TABLA DE RESUMEN EJECUTIVO EN PDF -->
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 9px;">
-      <thead>
-        <tr style="background-color: #004481; color: #ffffff;">
-          <th style="padding: 6px; text-align: left;">CONCEPTO</th>
-          <th style="padding: 6px; text-align: right;">VALOR CONSOLIDADO</th>
-          <th style="padding: 6px; text-align: left;">DESCRIPCIÓN</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="padding: 5px; border: 1px solid #cbd5e1; font-weight: bold;">Deuda Total Consolidada</td>
-          <td style="padding: 5px; border: 1px solid #cbd5e1; text-align: right; font-weight: bold;" id="pdfKpiDeudaTotal">$0.00</td>
-          <td style="padding: 5px; border: 1px solid #cbd5e1;">Suma del principal de todos los bancos activos</td>
-        </tr>
-        <tr style="background: #f8fafc;">
-          <td style="padding: 5px; border: 1px solid #cbd5e1; font-weight: bold;">Participación BBVA</td>
-          <td style="padding: 5px; border: 1px solid #cbd5e1; text-align: right; color: #004481; font-weight: bold;" id="pdfKpiBBVA">$0.00</td>
-          <td style="padding: 5px; border: 1px solid #cbd5e1;" id="pdfKpiPctBBVA">0% de la deuda total</td>
-        </tr>
-        <tr>
-          <td style="padding: 5px; border: 1px solid #cbd5e1; font-weight: bold;">Participación Otros Bancos</td>
-          <td style="padding: 5px; border: 1px solid #cbd5e1; text-align: right; color: #b91c1c; font-weight: bold;" id="pdfKpiOtros">$0.00</td>
-          <td style="padding: 5px; border: 1px solid #cbd5e1;">Santander, Scotiabank, BanBajío, Banorte, etc.</td>
-        </tr>
-        <tr style="background: #f8fafc;">
-          <td style="padding: 5px; border: 1px solid #cbd5e1; font-weight: bold;">Vida Media Consolidada</td>
-          <td style="padding: 5px; border: 1px solid #cbd5e1; text-align: right; font-weight: bold;" id="pdfKpiVidaMedia">0.00</td>
-          <td style="padding: 5px; border: 1px solid #cbd5e1;">Años ponderados con base en el flujo de amortizaciones</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div style="font-size: 11px; font-weight: bold; color: #004481; margin-bottom: 6px; text-transform: uppercase;">
-      Cronograma Mensual Consolidado
-    </div>
-    <div id="pdfContenedorTabla">
-      <!-- Se inyectará la tabla mensual formateada para PDF -->
-    </div>
-  </div>
-
   <!-- LÓGICA DE NEGOCIO Y CÁLCULOS JAVASCRIPT -->
   <script>
     /**
      * URL DEL WEB APP DE GOOGLE APPS SCRIPT
      */
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz-HiAyPAKVo6vgcI-ktfmRKd02UEBedCeegaCHeaBd-2sRuVgkS3xiDpWauTGATLvFog/exec";
+
+    // DÍAS FIJOS POR MES DE CORTE (Enero siempre 31, Febrero 28, Marzo 31, Abril 30, etc.)
+    const DIAS_POR_MES = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
     // ESTADO GLOBAL EN MEMORIA (INICIA COMPLETAMENTE VACÍO)
     let listaCreditosCargados = [];
@@ -724,6 +667,20 @@
         inputBanquero.focus();
       }
     });
+
+    /**
+     * Calcula los días exactos correspondientes al mes (o meses) del periodo de corte.
+     * Garantiza que Enero siempre tenga 31 días, Febrero 28, Abril 30, etc., sin desfases.
+     */
+    function obtenerDiasPeriodoCorte(mesCorte1a12, periodoMeses) {
+      let totalDias = 0;
+      const idxMesFinal = mesCorte1a12 - 1; // 0 = Enero, 11 = Diciembre
+      for (let i = 0; i < periodoMeses; i++) {
+        const idx = (idxMesFinal - i + 120) % 12;
+        totalDias += DIAS_POR_MES[idx];
+      }
+      return totalDias;
+    }
 
     /**
      * COMUNICACIÓN CON GOOGLE APPS SCRIPT (JSONP O GOOGLE.SCRIPT.RUN)
@@ -901,6 +858,8 @@
 
     /**
      * MOTOR DE CÁLCULO INDIVIDUAL (LINEAL O CRECIENTE) PARA CADA PRÉSTAMO
+     * FÓRMULA DE INTERÉS PROPORCIONAL A LOS DÍAS EXACTOS DEL MES DE CORTE:
+     * Interés = (Saldo Inicial * Tasa Anual / 360) * Días del Mes de Corte
      */
     function calcularCorridaIndividual(cr) {
       const montoObjetivo = Number(cr.monto) || 0;
@@ -915,10 +874,10 @@
       const periodosAmort = Math.max(1, totalPeriodos - periodosGracia);
 
       const partes = (cr.fechaInicio || '2026-08-01').split('-');
-      const fechaBase = new Date(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
+      const anoBase = parseInt(partes[0]);
+      const mesBaseIdx = parseInt(partes[1]) - 1;
 
       let saldoActual = montoObjetivo;
-      let fechaAnterior = new Date(fechaBase);
       const periodosResultado = [];
 
       const esLineal = (cr.tipoAmortizacion || 'LINEAL').toUpperCase() === 'LINEAL';
@@ -926,10 +885,11 @@
       const periodosPorAno = Math.round(12 / periodoMeses);
 
       for (let p = 1; p <= totalPeriodos; p++) {
-        const fechaPeriodo = new Date(fechaBase.getFullYear(), fechaBase.getMonth() + (p * periodoMeses), fechaBase.getDate());
+        // Usamos día 1 para evitar desbordamientos de meses con 28/30/31 días
+        const fechaPeriodo = new Date(anoBase, mesBaseIdx + (p * periodoMeses), 1);
         const anoP = Math.ceil((p * periodoMeses) / 12);
         const anoCalendario = fechaPeriodo.getFullYear();
-        const mesCalendario = fechaPeriodo.getMonth() + 1;
+        const mesCalendario = fechaPeriodo.getMonth() + 1; // 1 = Enero ... 12 = Diciembre
         const keyMesAno = `${anoCalendario}-${mesCalendario < 10 ? '0' + mesCalendario : mesCalendario}`;
 
         const switchGracia = p <= periodosGracia ? 0 : 1;
@@ -950,12 +910,12 @@
         const montoAmortTeorico = montoObjetivo * pctAmort;
         const amortEfectiva = Math.min(montoAmortTeorico, saldoInicial);
 
-        const dias = Math.round((fechaPeriodo - fechaAnterior) / (1000 * 60 * 60 * 24));
-        const montoInteres = (saldoInicial * tasaInteres / 360) * dias;
+        // Días exactos del mes de corte (Ene=31, Feb=28, Mar=31, Abr=30, etc.)
+        const diasMesCorte = obtenerDiasPeriodoCorte(mesCalendario, periodoMeses);
+        const montoInteres = (saldoInicial * (tasaInteres / 360)) * diasMesCorte;
 
         const saldoFinal = Math.max(0, saldoInicial - amortEfectiva);
         saldoActual = saldoFinal;
-        fechaAnterior = new Date(fechaPeriodo);
 
         periodosResultado.push({
           periodoNum: p,
@@ -963,6 +923,7 @@
           fecha: fechaPeriodo,
           anoCalendario: anoCalendario,
           mesCalendario: mesCalendario,
+          diasCorte: diasMesCorte,
           saldoInicial: saldoInicial,
           amortizacion: amortEfectiva,
           interes: montoInteres,
@@ -1083,7 +1044,7 @@
 
       listaMeses.forEach(m => {
         totalAmortAcum += m.totalAmortizacion;
-        totalInteresAcum += m.totalInteres;
+        totalInteresAcum += m.totalIntereses;
 
         const esPico = m.totalAmortizacion > (promedioAmort * 1.8) && m.totalAmortizacion > 0;
 
@@ -1498,75 +1459,6 @@
       link.href = URL.createObjectURL(blob);
       link.download = `Amortizacion_Consolidada_${new Date().toISOString().split('T')[0]}.xlsx`;
       link.click();
-    }
-
-    /**
-     * EXPORTACIÓN DE INFORME EJECUTIVO A PDF
-     */
-    function exportarPDFConsolidado() {
-      if (consolidadoMensual.length === 0) return;
-
-      document.getElementById('pdfFechaEmision').innerText = new Date().toLocaleDateString('es-ES');
-      document.getElementById('pdfBanquero').innerText = document.getElementById('filtroBanquero').value.toUpperCase() || 'NO ESPECIFICADO';
-      document.getElementById('pdfKpiDeudaTotal').innerText = document.getElementById('kpiDeudaTotal').innerText;
-      document.getElementById('pdfKpiBBVA').innerText = document.getElementById('kpiDeudaBBVA').innerText;
-      document.getElementById('pdfKpiPctBBVA').innerText = document.getElementById('kpiPctBBVA').innerText;
-      document.getElementById('pdfKpiOtros').innerText = document.getElementById('kpiDeudaOtros').innerText;
-      document.getElementById('pdfKpiVidaMedia').innerText = document.getElementById('kpiVidaMediaConsolidada').innerText;
-
-      const pdfBox = document.getElementById('pdfContenedorTabla');
-      let tableHTML = `
-        <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
-          <thead>
-            <tr style="background-color: #004481; color: #ffffff;">
-              <th style="padding: 4px; border: 1px solid #cbd5e1;"># Per</th>
-              <th style="padding: 4px; border: 1px solid #cbd5e1;">Fecha</th>
-              <th style="padding: 4px; border: 1px solid #cbd5e1;">Saldo Inicial</th>
-              <th style="padding: 4px; border: 1px solid #cbd5e1;">Amort. BBVA</th>
-              <th style="padding: 4px; border: 1px solid #cbd5e1;">Amort. Otros</th>
-              <th style="padding: 4px; border: 1px solid #cbd5e1;">Total Amort.</th>
-              <th style="padding: 4px; border: 1px solid #cbd5e1;">Interés</th>
-              <th style="padding: 4px; border: 1px solid #cbd5e1;">Saldo Final</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      consolidadoMensual.forEach((m, idx) => {
-        const bg = (idx % 2 === 0) ? '#f8fafc' : '#ffffff';
-        const amortOtros = m.amortSantander + m.amortScotia + m.amortBajio + m.amortOtros;
-        tableHTML += `
-          <tr style="background-color: ${bg}; text-align: right;">
-            <td style="padding: 3px; border: 1px solid #cbd5e1; text-align: center;">${m.periodo}</td>
-            <td style="padding: 3px; border: 1px solid #cbd5e1; text-align: center;">${m.keyMesAno}</td>
-            <td style="padding: 3px; border: 1px solid #cbd5e1;">${formatoMoneda(m.saldoInicial)}</td>
-            <td style="padding: 3px; border: 1px solid #cbd5e1; color: #004481; font-weight: bold;">${formatoMoneda(m.amortBBVA)}</td>
-            <td style="padding: 3px; border: 1px solid #cbd5e1; color: #b91c1c;">${formatoMoneda(amortOtros)}</td>
-            <td style="padding: 3px; border: 1px solid #cbd5e1; font-weight: bold;">${formatoMoneda(m.totalAmortizacion)}</td>
-            <td style="padding: 3px; border: 1px solid #cbd5e1;">${formatoMoneda(m.totalIntereses)}</td>
-            <td style="padding: 3px; border: 1px solid #cbd5e1; font-weight: bold;">${formatoMoneda(m.saldoFinal)}</td>
-          </tr>
-        `;
-      });
-
-      tableHTML += '</tbody></table>';
-      pdfBox.innerHTML = tableHTML;
-
-      const element = document.getElementById('pdfPlantillaConsolidada');
-      element.style.display = 'block';
-
-      const opt = {
-        margin:       [0.3, 0.3, 0.3, 0.3],
-        filename:     `Reporte_Amortizacion_Consolidada_${new Date().toISOString().split('T')[0]}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, backgroundColor: '#ffffff' },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' },
-        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
-      };
-
-      html2pdf().set(opt).from(element).save().then(() => {
-        element.style.display = 'none';
-      });
     }
   </script>
 </body>
