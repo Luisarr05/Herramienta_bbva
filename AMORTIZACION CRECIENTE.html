@@ -265,7 +265,6 @@
   <main class="container mx-auto px-4 py-6 max-w-[1650px] relative z-10">
     
     <div class="flex items-center justify-between mb-6 animate__animated animate__fadeInDown">
-      <!-- REDIRECCIÓN ACTUALIZADA A PAGINA_SEC.html -->
       <a href="AMORTIZACION_CONSOLIDADA.html" class="btn-back px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 shadow-lg">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -348,7 +347,7 @@
               <p class="text-[0.68rem] text-slate-400 mb-2">Asigna el % de amortización para cada año. La suma total (incluyendo Balloon) debe ser exactamente 100%.</p>
               
               <div id="contenedorPorcentajesAnuales" class="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
-                </div>
+              </div>
             </div>
 
           </div>
@@ -382,7 +381,7 @@
                 <span class="p-1.5 bg-cyan-500/20 text-cyan-300 rounded-lg">📊</span>
                 Calendario de Amortización Creciente
               </h2>
-              <p class="text-xs text-slate-300 mt-0.5">Estructura según porcentajes asignados por año.</p>
+              <p class="text-xs text-slate-300 mt-0.5">Estructura según porcentajes anuales con fechas (Día/Mes/Año) e intereses exactos por mes de corte.</p>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
@@ -409,7 +408,7 @@
                   <th class="w-[7%]"># Periodo</th>
                   <th class="w-[8%]">Fac Año</th>
                   <th class="w-[7%]">Año P.</th>
-                  <th class="w-[9%]">Fecha</th>
+                  <th class="w-[9%]">Fecha (DD/MM/AAAA)</th>
                   <th class="w-[6%]">Año</th>
                   <th class="w-[11%]">Saldo Inicial</th>
                   <th class="w-[11%]">Disposición Mn</th>
@@ -503,10 +502,38 @@
   </div>
 
   <script>
+    // DÍAS FIJOS POR MES CALENDARIO (Enero=31, Febrero=28, Marzo=31, Abril=30, etc.)
+    const DIAS_POR_MES = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
     document.addEventListener('DOMContentLoaded', () => {
       generarInputsPorcentajesAnuales();
       calcularTablaAmortizacion();
     });
+
+    /**
+     * Obtiene la suma exacta de los días correspondientes al mes (o meses) del corte.
+     */
+    function obtenerDiasPeriodoCorte(mesCorte1a12, periodoMeses) {
+      let totalDias = 0;
+      const idxMesFinal = mesCorte1a12 - 1; // 0 = Enero, 11 = Diciembre
+      for (let i = 0; i < periodoMeses; i++) {
+        const idx = (idxMesFinal - i + 120) % 12;
+        totalDias += DIAS_POR_MES[idx];
+      }
+      return totalDias;
+    }
+
+    /**
+     * Crea una fecha sumando meses de forma segura sin desbordar si el día original es 29, 30 o 31.
+     */
+    function sumarMesesSeguro(anoBase, mesBase0a11, diaBase, mesesASumar) {
+      const fechaTemp = new Date(anoBase, mesBase0a11 + mesesASumar, 1);
+      const anoDestino = fechaTemp.getFullYear();
+      const mesDestino = fechaTemp.getMonth();
+      const ultimoDiaDelMes = new Date(anoDestino, mesDestino + 1, 0).getDate();
+      const diaFinal = Math.min(diaBase, ultimoDiaDelMes);
+      return new Date(anoDestino, mesDestino, diaFinal);
+    }
 
     function calcularFracAno(fechaInicio, fechaFin) {
       const diffTime = Math.abs(fechaFin - fechaInicio);
@@ -518,7 +545,6 @@
       const plazoAnos = Math.max(1, Math.floor(parseFloat(document.getElementById('paramPlazoAnos').value) || 1));
       const contenedor = document.getElementById('contenedorPorcentajesAnuales');
       
-      // Guardar valores previos si existen
       const valoresPrevios = {};
       const inputsAnteriores = contenedor.querySelectorAll('input[data-ano]');
       inputsAnteriores.forEach(inp => {
@@ -624,11 +650,13 @@
 
       let saldoActual = deudaObjetivo;
       let partesFecha = fechaInicialStr.split('-');
-      let fechaBase = new Date(partesFecha[0], partesFecha[1] - 1, partesFecha[2]);
+      let anoBase = parseInt(partesFecha[0]);
+      let mesBase = parseInt(partesFecha[1]) - 1;
+      let diaBase = parseInt(partesFecha[2]);
+      let fechaBase = new Date(anoBase, mesBase, diaBase);
 
       let sumaSaldoMult = 0;
       let sumaAmortizacion = 0;
-      let fechaAnterior = new Date(fechaBase);
 
       let row0 = document.createElement('tr');
       row0.className = 'row-disposition font-semibold';
@@ -650,11 +678,12 @@
       const periodosPorAno = Math.round(12 / periodoAmortMeses);
 
       for (let p = 1; p <= totalPeriodos; p++) {
-        let fechaPeriodo = new Date(fechaBase.getFullYear(), fechaBase.getMonth() + (p * periodoAmortMeses), fechaBase.getDate());
+        let fechaPeriodo = sumarMesesSeguro(anoBase, mesBase, diaBase, p * periodoAmortMeses);
         
         let facAno = calcularFracAno(fechaBase, fechaPeriodo);
         let anoP = Math.ceil((p * periodoAmortMeses) / 12);
         let anoActual = fechaPeriodo.getFullYear();
+        let mesCorte1a12 = fechaPeriodo.getMonth() + 1;
 
         let switchGracia = p <= periodosGracia ? 0 : 1;
 
@@ -675,8 +704,9 @@
 
         let saldoInicial = saldoActual;
         
-        let diasTranscurridos = Math.round((fechaPeriodo - fechaAnterior) / (1000 * 60 * 60 * 24));
-        let montoInteres = (saldoInicial * tasaInteres / 360) * diasTranscurridos;
+        // FÓRMULA DE INTERESES PROPORCIONAL A LOS DÍAS EXACTOS DEL MES DE CORTE (Base 360)
+        let diasDelMesCorte = obtenerDiasPeriodoCorte(mesCorte1a12, periodoAmortMeses);
+        let montoInteres = (saldoInicial * (tasaInteres / 360)) * diasDelMesCorte;
 
         let amortizacionEfectiva = Math.min(montoAmort, saldoInicial);
         if (saldoInicial <= 0) {
@@ -689,7 +719,6 @@
 
         sumaSaldoMult += saldoInicial;
         sumaAmortizacion += amortizacionEfectiva;
-        fechaAnterior = new Date(fechaPeriodo);
 
         let tr = document.createElement('tr');
         tr.innerHTML = `
@@ -718,11 +747,14 @@
       return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
+    /**
+     * Formato de Fecha: Día / Mes / Año (DD/MM/YYYY)
+     */
     function formatearFecha(date) {
-      let m = date.getMonth() + 1;
       let d = date.getDate();
+      let m = date.getMonth() + 1;
       let y = date.getFullYear();
-      return `${m < 10 ? '0' + m : m}/${d < 10 ? '0' + d : d}/${y}`;
+      return `${d < 10 ? '0' + d : d}/${m < 10 ? '0' + m : m}/${y}`;
     }
 
     function notificarCalculo() {
@@ -754,7 +786,9 @@
       titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
       sheet.getRow(1).height = 35;
 
-      const fechaInicial = document.getElementById('paramFechaInicial').value;
+      const fechaInicialRaw = document.getElementById('paramFechaInicial').value || '2026-08-01';
+      const partesF = fechaInicialRaw.split('-');
+      const fechaInicial = partesF.length === 3 ? `${partesF[2]}/${partesF[1]}/${partesF[0]}` : fechaInicialRaw;
       const deudaObjetivo = parseFloat(document.getElementById('paramDeudaObjetivo').value) || 0;
       const plazoAnos = parseFloat(document.getElementById('paramPlazoAnos').value) || 0;
       const periodoAmort = parseInt(document.getElementById('paramPeriodoAmort').value) || 1;
@@ -813,7 +847,7 @@
 
       const startRow = 10;
       const headers = [
-        '# Periodo', 'Fac Año', 'Año P.', 'Fecha', 'Año', 
+        '# Periodo', 'Fac Año', 'Año P.', 'Fecha (DD/MM/AAAA)', 'Año', 
         'Saldo Inicial', 'Disposición Mn', 'Amortización ($)', 
         'Interés ($)', 'Amortización (%)', 'Saldo Final'
       ];
@@ -903,7 +937,7 @@
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `Estructuracion_Deuda_Creciente_${fechaInicial}.xlsx`;
+      link.download = `Estructuracion_Deuda_Creciente_${fechaInicialRaw}.xlsx`;
       link.click();
     }
 
