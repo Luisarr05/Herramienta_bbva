@@ -162,6 +162,25 @@
       border-radius: 6px;
       margin-top: 6px;
     }
+
+    /* TARJETA CHECKLIST DE DOCUMENTOS REQUERIDOS */
+    .checklist-card {
+      background: rgba(7, 25, 56, 0.85);
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      border-left: 4px solid #00d4ff;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: #e2e8f0;
+      padding: 4px 0;
+    }
   </style>
 </head>
 <body class="relative z-10">
@@ -186,20 +205,27 @@
         Portal de <span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-sky-200 to-indigo-300">Solicitud de Crédito</span>
       </h1>
       <p class="text-slate-300 text-sm md:text-base max-w-xl mx-auto">
-        Complete la información requerida y cargue los documentos del cliente para su evaluación.
+        Complete la información requerida y cargue los documentos del cliente para su evaluación[cite: 36].
       </p>
     </header>
 
     <div class="glass-card rounded-3xl p-6 md:p-10 animate__animated animate__fadeInUp">
       <form id="formularioCredito">
         
-        <div class="section-title"><i class="fa-regular fa-id-card"></i> Datos del Banquero y Contacto</div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="section-title"><i class="fa-regular fa-id-card"></i> Datos del Banquero, Empresa/Cliente y Contacto</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div class="field-group">
-            <label for="clientNumber">Nombre del Banquero (*)</label>
+            <label for="nombreBanquero">Nombre del Banquero / Ejecutivo (*)</label>
             <div class="input-icon-wrapper">
               <i class="fa-solid fa-user-tie"></i>
-              <input type="text" id="clientNumber" required placeholder="Ej. Carlos Méndez">
+              <input type="text" id="nombreBanquero" required placeholder="Ej. Carlos Méndez">
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="nombreCliente">Empresa / Razón Social o No. Cliente (*)</label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-building"></i>
+              <input type="text" id="nombreCliente" required placeholder="Ej. GRUPO INDUSTRIAL VIDA SA DE CV">
             </div>
           </div>
           <div class="field-group">
@@ -328,9 +354,35 @@
           </div>
         </div>
 
-        <!-- SECCIÓN DE DOCUMENTOS SIN LISTA FIJA -->
+        <!-- SECCIÓN DE DOCUMENTOS -->
         <div class="section-title"><i class="fa-solid fa-folder-open"></i> Documentación Requerida (*)</div>
-        <p class="text-xs text-slate-300 mb-4">Es obligatorio subir los archivos para habilitar el envío. Se guardarán en Google Drive.</p>
+        
+        <!-- GUÍA / CHECKLIST DE DOCUMENTOS REQUERIDOS SEGÚN NORMATIVA -->
+        <div class="checklist-card">
+          <p class="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-clipboard-check text-cyan-400"></i> Información básica requerida para la elaboración de proyecciones:
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">
+            <div class="checklist-item">
+              <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+              <span><b>EEFF:</b> 2 ejercicios y un parcial con vigencia máxima de 6 meses.</span>
+            </div>
+            <div class="checklist-item">
+              <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+              <span><b>Vaciado financiero:</b> AFE o Creditlens.</span>
+            </div>
+            <div class="checklist-item">
+              <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+              <span><b>Proyecciones base:</b> Con premisas (entregadas por el cliente).</span>
+            </div>
+            <div class="checklist-item">
+              <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+              <span><b>Cuadro de pasivos bancarios.</b></span>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-300 mb-3">Es obligatorio subir los archivos. Se archivarán en Drive dentro de <b>[Banquero] &rarr; [Empresa_ProyeccionN]</b>.</p>
 
         <div class="drop-zone-neon mb-4" id="dropZone" onclick="document.getElementById('fileInput').click()">
           <i class="fa-solid fa-cloud-arrow-up text-3xl text-cyan-400 mb-2"></i>
@@ -359,7 +411,7 @@
             <i class="fa-solid fa-file-signature text-xl"></i>
             <span>Realizar Registro AFE</span>
           </a>
-          <a href="CUADROS_PASIVOS.html" class="btn-option-pasivos text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-3 text-center">
+          <a href="Cuadros_pasivos.html" class="btn-option-pasivos text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-3 text-center">
             <i class="fa-solid fa-table-list text-xl"></i>
             <span>Cuadros de Pasivos</span>
           </a>
@@ -370,11 +422,11 @@
   </main>
 
   <script>
-    // URL de tu script donde sube los documentos a Drive
-    const SCRIPT_DRIVE_URL = "https://script.google.com/macros/s/AKfycbwIISMfYC4geS90iV6Wa327WwQQCeDWDhplp4NEKmw7G-bMSnS3cu0z02-hWVv9pfBw/exec";
+    // 1er link: Web App de Google Drive (subida y carpetas incrementales)
+    const SCRIPT_DRIVE_URL = "https://script.google.com/macros/s/AKfycbwsqHC5yrgMwWNB2I5t24Z7-b6AzTLGaJYtK0lLs_Ru2zF_VKbLYru3GlvsbHhWn0IRqw/exec";
     
-    // URL del script de la hoja de cálculo Respuestas Formulario
-    const SCRIPT_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwhtoIxRj40UFZZJHexisrpReK8PXlHOTAutqL_T6tp8qh4Fi37N61Ha0eOd7-dMdl8/exec";
+    // 2do link: Web App de Google Sheets (respuestas y correos con link a Drive)
+    const SCRIPT_SHEETS_URL = "https://script.google.com/macros/s/AKfycbzsLN-PKIB9RjdwM8A4t7KuWJcDPyrjTp_64AZbIBNRQ0ndcyZAGc73xBE34idKQnOX/exec";
 
     let archivosSeleccionados = [];
     const fileInput = document.getElementById('fileInput');
@@ -435,6 +487,40 @@
       });
     }
 
+    // Consulta por JSONP si el cliente ya existe bajo ese banquero en Drive
+    function verificarClienteExistente(banquero, cliente) {
+      return new Promise((resolve) => {
+        const callbackName = 'cb_verif_' + Math.round(Math.random() * 1000000);
+        const script = document.createElement('script');
+        script.id = callbackName;
+        script.src = `${SCRIPT_DRIVE_URL}?action=verificarCliente&nombreBanquero=${encodeURIComponent(banquero)}&nombreCliente=${encodeURIComponent(cliente)}&callback=${callbackName}`;
+
+        const timeout = setTimeout(() => {
+          cleanup();
+          resolve({ exists: false, count: 0, nextNum: 1, folderName: cliente + "_Proyeccion1" });
+        }, 5000);
+
+        function cleanup() {
+          clearTimeout(timeout);
+          delete window[callbackName];
+          const el = document.getElementById(callbackName);
+          if (el) el.remove();
+        }
+
+        window[callbackName] = function(res) {
+          cleanup();
+          resolve(res || { exists: false, count: 0, nextNum: 1, folderName: cliente + "_Proyeccion1" });
+        };
+
+        script.onerror = function() {
+          cleanup();
+          resolve({ exists: false, count: 0, nextNum: 1, folderName: cliente + "_Proyeccion1" });
+        };
+
+        document.body.appendChild(script);
+      });
+    }
+
     document.getElementById("formularioCredito").addEventListener("submit", async function(e) {
       e.preventDefault();
 
@@ -452,36 +538,99 @@
 
       const btn = document.getElementById("btnEnviar");
       btn.disabled = true;
-      const nombreBanquero = document.getElementById("clientNumber").value.trim();
+      const nombreBanquero = document.getElementById("nombreBanquero").value.trim();
+      const nombreCliente = document.getElementById("nombreCliente").value.trim();
+      const email = document.getElementById("email").value.trim();
+
+      let subcarpetaCreadaId = "";
+      let carpetaDriveClienteUrl = "";
 
       try {
-        // 1. Envío al script de Google Drive
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Verificando historial del cliente en Drive...`;
+
+        // 1. Verificar si ya hay proyecciones previas para este cliente
+        const verifInfo = await verificarClienteExistente(nombreBanquero, nombreCliente);
+        let nombreCarpetaDestino = verifInfo.folderName || (nombreCliente + "_Proyeccion1");
+
+        if (verifInfo && verifInfo.exists) {
+          const resultPregunta = await Swal.fire({
+            icon: 'question',
+            title: '¡Cliente Existente!',
+            html: `
+              <p class="text-sm text-slate-300">
+                Se detectó que el cliente <b>"${nombreCliente}"</b> ya cuenta con <b>${verifInfo.count}</b> proyección(es) anterior(es) bajo este banquero.
+              </p>
+              <p class="text-xs text-cyan-300 font-bold mt-3">
+                ¿Deseas solicitar una nueva proyección para este cliente?
+              </p>
+              <p class="text-[11px] text-slate-400 mt-1">
+                Para evitar mezclar documentos, se creará la carpeta: <b>"${verifInfo.folderName}"</b>.
+              </p>
+            `,
+            background: '#072146',
+            color: '#fff',
+            showCancelButton: true,
+            confirmButtonColor: '#00d4ff',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Sí, solicitar nueva proyección',
+            cancelButtonText: 'Cancelar'
+          });
+
+          if (!resultPregunta.isConfirmed) {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Procesar Solicitud y Guardar Documentos`;
+            return;
+          }
+        }
+
+        // 2. Subida de archivos a Drive a la subcarpeta incremental (_ProyeccionN)
         for (let i = 0; i < archivosSeleccionados.length; i++) {
           const file = archivosSeleccionados[i];
           btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Subiendo archivo ${i + 1} de ${archivosSeleccionados.length} a Drive...`;
           
           const rawData = await leerArchivoBase64(file);
           const payload = {
-            clientNumber: nombreBanquero,
             nombreBanquero: nombreBanquero,
+            nombreCliente: nombreCliente,
+            targetFolderId: subcarpetaCreadaId,
+            customFolderName: nombreCarpetaDestino,
             fileName: file.name,
             mimeType: file.type,
             fileData: rawData
           };
 
-          await fetch(SCRIPT_DRIVE_URL, {
-            method: 'POST',
-            body: JSON.stringify(payload)
-          });
+          try {
+            const respDrive = await fetch(SCRIPT_DRIVE_URL, {
+              method: 'POST',
+              body: JSON.stringify(payload)
+            });
+
+            const textoResp = await respDrive.text();
+            try {
+              const jsonDrive = JSON.parse(textoResp);
+              if (jsonDrive && jsonDrive.folderId) {
+                subcarpetaCreadaId = jsonDrive.folderId;
+              }
+              if (jsonDrive && jsonDrive.folderUrl) {
+                carpetaDriveClienteUrl = jsonDrive.folderUrl;
+              }
+            } catch (errJson) {
+              console.warn("Respuesta en texto:", textoResp);
+            }
+          } catch (eDrive) {
+            console.warn("Subida a Drive enviada:", eDrive);
+          }
         }
 
-        // 2. Envío a Google Sheets y Notificación de Correos
-        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando en Sheets y notificando...`;
+        // 3. Envío de datos a Google Sheets y notificación por correo con el link
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando en Sheets y notificando por correo...`;
 
         const datos = {
-          clientNumber: nombreBanquero,
+          clientNumber: nombreCliente,
           nombreBanquero: nombreBanquero,
-          email: document.getElementById("email").value,
+          nombreCliente: nombreCliente,
+          email: email,
+          folderUrl: carpetaDriveClienteUrl,
           tipoCredito: document.getElementById("tipoCredito").value,
           monto: document.getElementById("monto").value,
           moneda: document.getElementById("moneda").value,
@@ -500,18 +649,47 @@
           formData.append(key, datos[key]);
         }
 
-        await fetch(SCRIPT_SHEETS_URL, {
-          method: "POST",
-          body: formData
-        });
+        try {
+          await fetch(SCRIPT_SHEETS_URL, {
+            method: "POST",
+            body: formData,
+            mode: "no-cors"
+          });
+        } catch(errSheets) {
+          console.warn("Petición a Sheets enviada:", errSheets);
+        }
+
+        // 4. Modal final con el enlace directo a la carpeta en Google Drive
+        const botonCarpetaHTML = carpetaDriveClienteUrl ? `
+          <div class="mt-4 p-4 rounded-xl bg-slate-900/90 border border-cyan-400/50 text-left">
+            <p class="text-xs font-bold text-cyan-300 mb-1 flex items-center gap-1.5">
+              <i class="fa-brands fa-google-drive text-base text-cyan-400"></i> Carpeta Asignada (${nombreCarpetaDestino}):
+            </p>
+            <p class="text-[11px] text-slate-300 mb-3">
+              Tus documentos han sido archivados. Se ha enviado un correo con este enlace y en este mismo espacio encontrarás tu proyección cuando esté lista.
+            </p>
+            <a href="${carpetaDriveClienteUrl}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs transition shadow-lg">
+              <i class="fa-solid fa-folder-open"></i> Abrir Carpeta de la Proyección en Drive
+            </a>
+          </div>
+        ` : '';
 
         Swal.fire({
           icon: 'success',
           title: '¡Operación Exitosa!',
-          text: `Carpeta "${nombreBanquero}" creada en Drive y datos registrados en la hoja de cálculo.`,
+          html: `
+            <p class="text-sm text-slate-300">
+              Solicitud procesada para el cliente <b>${nombreCliente}</b> (${nombreCarpetaDestino}).
+            </p>
+            <p class="text-xs text-emerald-400 mt-2 font-semibold">
+              <i class="fa-solid fa-envelope-circle-check mr-1"></i> Se envió un correo de confirmación a <b>${email}</b> y al administrador con el enlace a la carpeta.
+            </p>
+            ${botonCarpetaHTML}
+          `,
           background: '#072146',
           color: '#fff',
-          confirmButtonColor: '#00d4ff'
+          confirmButtonColor: '#00d4ff',
+          confirmButtonText: 'Aceptar'
         });
 
         document.getElementById("formularioCredito").reset();
@@ -523,7 +701,7 @@
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Ocurrió un inconveniente al procesar la solicitud: ' + err.toString(),
+          text: 'Ocurrió un inconveniente: ' + err.toString(),
           background: '#072146',
           color: '#fff'
         });
